@@ -1,0 +1,16 @@
+{
+  "name": "frank-native-callstack",
+  "version": "0.1.19",
+  "description": "build call stack model for writing async like sync",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Harry Lien",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^11.10.4",
+    "frank-native-core": "^2.0.16"
+  }
+}
