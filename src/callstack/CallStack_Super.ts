@@ -2,24 +2,36 @@ import Frank from "frank-native-core";
 import CallItem from "../callitem/CallItem_Type";
 const CallItem = require("../callitem/CallItem");
 import { CallObject } from "./CallObject";
-import CallStack from "./CallStack_Type";
 let current_stack = null as any;
-export = class CallStack_Super {
-  lastItem: () => CallItem | null;
-  val: (variKey: string) => any;
-  append: (key: null | string | CallItem | CallObject, methodCall?: (...args: any) => void, paramsCall?: () => Array<any>) => this;
-  next: (key: string | CallItem | CallObject, methodCall?: (...args: any) => void, paramsCall?: () => Array<any>) => this;
-  loop: (loopCall: () => boolean, loopFrom: () => CallItem) => this;
-  sleep: (msec: number) => this;
-  markAs: (mark: string) => this;
-  findMark: (mark: string) => CallItem;
-  success: (succ?: (o: any) => any) => this & ((o: any) => any) = Frank.FrankUtils.getter_setter();
-  error: (err?: (o: Error) => any) => this & ((o: Error) => any) = Frank.FrankUtils.getter_setter();
-  complete: (comp?: (o: any) => any) => this & ((o: any) => any) = Frank.FrankUtils.getter_setter();
-  execute: () => void;
-  public static currentCallStack(): CallStack | null {
+export = class CallStack_Super  {
+    public static currentCallStack(): CallStack_Super | null {
     return current_stack;
   }
+  lastItem: () => CallItem | null;
+  val: (variKey: string) => any;
+  append: (key: null | string | CallItem | CallObject, methodCall?: (...args: any) => void, paramsCall?: () => Array<any>) => CallStack_Super;
+  next: (key: string | CallItem | CallObject, methodCall?: (...args: any) => void, paramsCall?: () => Array<any>) => CallStack_Super;
+  loop: (loopCall: () => boolean, loopFrom: () => CallItem) => CallStack_Super;
+  sleep: (msec: number) => CallStack_Super;
+  markAs: (mark: string) => CallStack_Super;
+  findMark: (mark: string) => CallItem;
+  success ( succ: ( o: any ) => void): CallStack_Super;
+  success (): ( o: any ) => void;
+  success(){
+    return Frank.FrankUtils.error("Not Implement") as any;
+  }
+  error ( err: ( o: Error ) => void): CallStack_Super;
+  error (): ( o: Error ) => void;
+  error(){
+    return Frank.FrankUtils.error("Not Implement") as any;
+  }
+  complete ( comp: ( o: any ) => void): CallStack_Super;
+  complete (): ( o: any ) => void;
+  complete(){
+    return Frank.FrankUtils.error("Not Implement") as any;
+  }
+  execute:() =>void;
+  //
   constructor() {
     var that = this;
     var priv__: { [key: string]: any } = {};
@@ -50,21 +62,21 @@ export = class CallStack_Super {
       } else {
         throw new Error("CallStack Append Imspossible Error");
       }
-      return this;
+      return this as any;
     };
     this.next = function() {
       if (execItem) {
         var ci = priv__.createItem.apply(this, arguments);
         execItem.next(ci.next(execItem.next()));
       }
-      return this;
+      return this as any;
     };
     this.loop = function(loopCall, loopFrom) {
       if (lastItem) {
         lastItem.loopCall(loopCall);
         lastItem.loopFrom(loopFrom);
       }
-      return this;
+      return this as any;
     };
     this.sleep = function(msec) {
       if (lastItem) {
@@ -80,7 +92,7 @@ export = class CallStack_Super {
           })(lastItem.methodCall())
         );
       }
-      return this;
+      return this as any;
     };
     this.execute = function() {
       try {
@@ -92,7 +104,7 @@ export = class CallStack_Super {
     };
     this.markAs = function(mark) {
       markedItemMap.set(mark, lastItem);
-      return this;
+      return this as any;
     };
     this.findMark = mark => {
       var item = markedItemMap.get(mark);
@@ -102,6 +114,9 @@ export = class CallStack_Super {
         throw new Error("Not exist item " + mark);
       }
     };
+    this.success = Frank.FrankUtils.getter_setter();
+    this.error = Frank.FrankUtils.getter_setter();
+    this.complete = Frank.FrankUtils.getter_setter();
     priv__.createItem = function() {
       if (
         arguments.length === 1 && //e

@@ -1,5 +1,4 @@
 import CallStack from "../src/index";
-debugger;
 function asyncAdd(p1: number, p2: number, cb: (o: any) => void): void {
   setTimeout(() => cb(p1 + p2), 1);
 }

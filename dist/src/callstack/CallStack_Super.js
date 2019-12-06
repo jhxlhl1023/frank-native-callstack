@@ -6,10 +6,8 @@ var frank_native_core_1 = __importDefault(require("frank-native-core"));
 var CallItem = require("../callitem/CallItem");
 var current_stack = null;
 module.exports = /** @class */ (function () {
+    //
     function CallStack_Super() {
-        this.success = frank_native_core_1.default.FrankUtils.getter_setter();
-        this.error = frank_native_core_1.default.FrankUtils.getter_setter();
-        this.complete = frank_native_core_1.default.FrankUtils.getter_setter();
         var that = this;
         var priv__ = {};
         var stackResults = {};
@@ -96,6 +94,9 @@ module.exports = /** @class */ (function () {
                 throw new Error("Not exist item " + mark);
             }
         };
+        this.success = frank_native_core_1.default.FrankUtils.getter_setter();
+        this.error = frank_native_core_1.default.FrankUtils.getter_setter();
+        this.complete = frank_native_core_1.default.FrankUtils.getter_setter();
         priv__.createItem = function () {
             if (arguments.length === 1 && //e
                 arguments[0].hasOwnProperty("isInstance") && //e
@@ -268,6 +269,15 @@ module.exports = /** @class */ (function () {
     }
     CallStack_Super.currentCallStack = function () {
         return current_stack;
+    };
+    CallStack_Super.prototype.success = function () {
+        return frank_native_core_1.default.FrankUtils.error("Not Implement");
+    };
+    CallStack_Super.prototype.error = function () {
+        return frank_native_core_1.default.FrankUtils.error("Not Implement");
+    };
+    CallStack_Super.prototype.complete = function () {
+        return frank_native_core_1.default.FrankUtils.error("Not Implement");
     };
     return CallStack_Super;
 }());

@@ -1,7 +1,6 @@
 import CallItem from "../callitem/CallItem_Type";
 declare const CallItem: any;
 import { CallObject } from "./CallObject";
-import CallStack from "./CallStack_Type";
 declare const _default: {
     new (): {
         lastItem: () => CallItem | null;
@@ -12,11 +11,30 @@ declare const _default: {
         sleep: (msec: number) => any;
         markAs: (mark: string) => any;
         findMark: (mark: string) => CallItem;
-        success: (succ?: ((o: any) => any) | undefined) => any & ((o: any) => any);
-        error: (err?: ((o: Error) => any) | undefined) => any & ((o: Error) => any);
-        complete: (comp?: ((o: any) => any) | undefined) => any & ((o: any) => any);
+        success(succ: (o: any) => void): any;
+        success(): (o: any) => void;
+        error(err: (o: Error) => void): any;
+        error(): (o: Error) => void;
+        complete(comp: (o: any) => void): any;
+        complete(): (o: any) => void;
         execute: () => void;
     };
-    currentCallStack(): CallStack | null;
+    currentCallStack(): {
+        lastItem: () => CallItem | null;
+        val: (variKey: string) => any;
+        append: (key: string | CallItem | CallObject | null, methodCall?: ((...args: any) => void) | undefined, paramsCall?: (() => any[]) | undefined) => any;
+        next: (key: string | CallItem | CallObject, methodCall?: ((...args: any) => void) | undefined, paramsCall?: (() => any[]) | undefined) => any;
+        loop: (loopCall: () => boolean, loopFrom: () => CallItem) => any;
+        sleep: (msec: number) => any;
+        markAs: (mark: string) => any;
+        findMark: (mark: string) => CallItem;
+        success(succ: (o: any) => void): any;
+        success(): (o: any) => void;
+        error(err: (o: Error) => void): any;
+        error(): (o: Error) => void;
+        complete(comp: (o: any) => void): any;
+        complete(): (o: any) => void;
+        execute: () => void;
+    } | null;
 };
 export = _default;

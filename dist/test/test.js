@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = __importDefault(require("../src/index"));
-debugger;
 function asyncAdd(p1, p2, cb) {
     setTimeout(function () { return cb(p1 + p2); }, 1);
 }

@@ -156,14 +156,13 @@ This module can make it easy.
 #Super simple to use: 
 ##Example: 
 ### First of all:
-    Let us suppose that there only 4 async functions and no other
-    math functions for further example.
-    ```js
-    var asyncAdd = (p1,p2,cb)=>setTimeout(()=>cb(p1+p2));
-    var asyncMns = (p1,p2,cb)=>setTimeout(()=>cb(p1-p2));
-    var asyncMul = (p1,p2,cb)=>setTimeout(()=>cb(p1*p2));
-    var asyncDvd = (p1,p2,cb)=>setTimeout(()=>cb(p1/p2));
-    ```
+Let us suppose that there only 4 async functions and no other math functions for further example.
+```js
+var asyncAdd = (p1,p2,cb)=>setTimeout(()=>cb(p1+p2));
+var asyncMns = (p1,p2,cb)=>setTimeout(()=>cb(p1-p2));
+var asyncMul = (p1,p2,cb)=>setTimeout(()=>cb(p1*p2));
+var asyncDvd = (p1,p2,cb)=>setTimeout(()=>cb(p1/p2));
+```
 
 ### Second: Use "callStack.append" to handle simple logic
     Calculate the result of formula ((1+2)*3+4)/5-9+2)
