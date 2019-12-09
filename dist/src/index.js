@@ -2,10 +2,11 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var frank_native_core_1 = __importDefault(require("frank-native-core"));
 var CallStack_Impl_1 = __importDefault(require("./callstack/CallStack_Impl"));
 var AopBuilder_Impl_1 = __importDefault(require("./aop/AopBuilder_Impl"));
-module.exports = frank_native_core_1.default.buildType("CallStack")
+exports.default = frank_native_core_1.default.buildType("CallStack")
     .extendsFrom(CallStack_Impl_1.default)
     .toClass()
     .statics(/** @class */ (function () {
@@ -22,27 +23,19 @@ module.exports = frank_native_core_1.default.buildType("CallStack")
                         throw new Error("key can not be null");
                     }
                     else {
-                        var ks = k.split(".");
                         var obj = o;
-                        var i = 0;
-                        while (i < ks.length) {
-                            if (i === ks.length - 1) {
-                                obj[ks[i]] = v;
-                            }
-                            else {
-                                obj = obj[ks[i]] = obj[ks[i]] || {};
-                            }
-                            i++;
-                        }
+                        var keys = k.split(".");
+                        var lastKey = keys.pop();
+                        keys.reduce(function (obj, key) { return (obj = obj[key] = obj[key] || {}); }, obj);
+                        obj[lastKey] = v;
                     }
                     return this;
                 },
                 done: function (k, v) {
-                    if (k) {
+                    if (k)
                         this.kv(k, v);
-                    }
                     return o;
-                }
+                },
             };
             if (k) {
                 builder.kv(k, v);

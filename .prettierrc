@@ -1,0 +1,11 @@
+{
+    "trailingComma": "es5",
+    "printWidth": 99999,
+    "overrides": [ {
+        "files": ".prettierrc",
+        "options": {
+            "parser": "json"
+        }
+    } ],
+    "proseWrap": "always"
+}

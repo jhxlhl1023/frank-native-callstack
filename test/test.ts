@@ -46,13 +46,19 @@ function asyncDvd(p1: number, p2: number, cb: (o: any) => void): void {
   // 6. j = asyncAdd(j, 1)
   cs.append("j", asyncAdd, () => [cs.val("j"), 1]);
   // 7. j <= i?back to itemj
-  cs.loop(() => cs.val("j") <= cs.val("i"), () => cs.findMark("itemj"));
+  cs.loop(
+    () => cs.val("j") <= cs.val("i"),
+    () => cs.findMark("itemj")
+  );
   // 8. i = asyncAdd(i, 1)
   cs.append("i", asyncAdd, () => [cs.val("i"), 1]);
   // 9. sum = asyncAdd(sum, fac)
   cs.append("sum", asyncAdd, () => [cs.val("sum"), cs.val("fac")]);
   // 10. i <= 10?back to itemi
-  cs.loop(() => cs.val("i") <= 10, () => cs.findMark("itemi"));
+  cs.loop(
+    () => cs.val("i") <= 10,
+    () => cs.findMark("itemi")
+  );
   // 11. console sum value. all done.
   cs.success((sum: any) => console.log("1! + 2! + 3! + 4! + 5! + 6! + 7! + 8! + 9! + 10! = " + sum));
   // 12. console err if happends

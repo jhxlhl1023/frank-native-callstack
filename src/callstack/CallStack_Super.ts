@@ -3,34 +3,32 @@ import CallItem from "../callitem/CallItem_Type";
 const CallItem = require("../callitem/CallItem");
 import { CallObject } from "./CallObject";
 let current_stack = null as any;
-export = class CallStack_Super  {
-    public static currentCallStack(): CallStack_Super | null {
-    return current_stack;
-  }
+export default class CallStack_Super {
+  public static currentCallStack: () => CallStack_Super | null;
   lastItem: () => CallItem | null;
   val: (variKey: string) => any;
-  append: (key: null | string | CallItem | CallObject, methodCall?: (...args: any) => void, paramsCall?: () => Array<any>) => CallStack_Super;
-  next: (key: string | CallItem | CallObject, methodCall?: (...args: any) => void, paramsCall?: () => Array<any>) => CallStack_Super;
-  loop: (loopCall: () => boolean, loopFrom: () => CallItem) => CallStack_Super;
-  sleep: (msec: number) => CallStack_Super;
-  markAs: (mark: string) => CallStack_Super;
+  append: <T>(this: T, key: null | string | CallItem | CallObject, methodCall?: (...args: any) => void, paramsCall?: () => Array<any>) => T;
+  next: <T>(this: T, key: string | CallItem | CallObject, methodCall?: (...args: any) => void, paramsCall?: () => Array<any>) => T;
+  loop: <T>(this: T, loopCall: () => boolean, loopFrom: () => CallItem) => T;
+  sleep: <T>(this: T, msec: number) => T;
+  markAs: <T>(this: T, mark: string) => T;
   findMark: (mark: string) => CallItem;
-  success ( succ: ( o: any ) => void): CallStack_Super;
-  success (): ( o: any ) => void;
-  success(){
+  success<T>(this: T, succ: (o: any) => void): T;
+  success<T>(this: T): (o: any) => void;
+  success<T>(this: T) {
     return Frank.FrankUtils.error("Not Implement") as any;
   }
-  error ( err: ( o: Error ) => void): CallStack_Super;
-  error (): ( o: Error ) => void;
-  error(){
+  error<T>(this: T, err: (o: Error) => void): CallStack_Super;
+  error<T>(this: T): (o: Error) => void;
+  error<T>(this: T) {
     return Frank.FrankUtils.error("Not Implement") as any;
   }
-  complete ( comp: ( o: any ) => void): CallStack_Super;
-  complete (): ( o: any ) => void;
-  complete(){
+  complete(comp: (o: any) => void): CallStack_Super;
+  complete(): (o: any) => void;
+  complete() {
     return Frank.FrankUtils.error("Not Implement") as any;
   }
-  execute:() =>void;
+  execute: () => void;
   //
   constructor() {
     var that = this;
@@ -62,7 +60,7 @@ export = class CallStack_Super  {
       } else {
         throw new Error("CallStack Append Imspossible Error");
       }
-      return this as any;
+      return this;
     };
     this.next = function() {
       if (execItem) {
@@ -271,4 +269,7 @@ export = class CallStack_Super  {
       }
     };
   }
+}
+CallStack_Super.currentCallStack = () => {
+  return current_stack;
 };

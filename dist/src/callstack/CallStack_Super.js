@@ -2,10 +2,11 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var frank_native_core_1 = __importDefault(require("frank-native-core"));
 var CallItem = require("../callitem/CallItem");
 var current_stack = null;
-module.exports = /** @class */ (function () {
+var CallStack_Super = /** @class */ (function () {
     //
     function CallStack_Super() {
         var that = this;
@@ -267,9 +268,6 @@ module.exports = /** @class */ (function () {
             }
         };
     }
-    CallStack_Super.currentCallStack = function () {
-        return current_stack;
-    };
     CallStack_Super.prototype.success = function () {
         return frank_native_core_1.default.FrankUtils.error("Not Implement");
     };
@@ -281,3 +279,7 @@ module.exports = /** @class */ (function () {
     };
     return CallStack_Super;
 }());
+exports.default = CallStack_Super;
+CallStack_Super.currentCallStack = function () {
+    return current_stack;
+};

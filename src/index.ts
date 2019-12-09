@@ -5,7 +5,7 @@ interface Oneline {
   kv: (k: string, v: any) => Oneline;
   done: (k: string, v: any) => any;
 }
-export = Frank.buildType("CallStack")
+export default Frank.buildType("CallStack")
   .extendsFrom(CallStack)
   .toClass()
   .statics(
@@ -21,26 +21,18 @@ export = Frank.buildType("CallStack")
             if (!k) {
               throw new Error("key can not be null");
             } else {
-              var ks = k.split(".");
               var obj = o;
-              var i = 0;
-              while (i < ks.length) {
-                if (i === ks.length - 1) {
-                  obj[ks[i]] = v;
-                } else {
-                  obj = obj[ks[i]] = obj[ks[i]] || {};
-                }
-                i++;
-              }
+              var keys = k.split(".");
+              var lastKey = keys.pop() as string;
+              keys.reduce((obj, key) => (obj = obj[key] = obj[key] || {}), obj);
+              obj[lastKey] = v;
             }
             return this;
           },
           done: function(k: any, v: any) {
-            if (k) {
-              this.kv(k, v);
-            }
+            if (k) this.kv(k, v);
             return o;
-          }
+          },
         };
         if (k) {
           builder.kv(k, v);
