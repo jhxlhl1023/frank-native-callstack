@@ -7,25 +7,28 @@ export default class CallStack_Super {
   public static currentCallStack: () => CallStack_Super | null;
   lastItem: () => CallItem | null;
   val: (variKey: string) => any;
-  append: <T>(this: T, key: null | string | CallItem | CallObject, methodCall?: (...args: any) => void, paramsCall?: () => Array<any>) => T;
-  next: <T>(this: T, key: string | CallItem | CallObject, methodCall?: (...args: any) => void, paramsCall?: () => Array<any>) => T;
-  loop: <T>(this: T, loopCall: () => boolean, loopFrom: () => CallItem) => T;
-  sleep: <T>(this: T, msec: number) => T;
-  markAs: <T>(this: T, mark: string) => T;
+  append: (key: null | string | CallItem | CallObject, methodCall?: (...args: any) => void, paramsCall?: () => Array<any>) => this;
+  next: (key: string | CallItem | CallObject, methodCall?: (...args: any) => void, paramsCall?: () => Array<any>) => this;
+  loop: (loopCall: () => boolean, loopFrom: () => CallItem) => this;
+  sleep: (msec: number) => this;
+  markAs: (mark: string) => this;
   findMark: (mark: string) => CallItem;
-  success<T>(this: T, succ: (o: any) => void): T;
-  success<T>(this: T): (o: any) => void;
-  success<T>(this: T) {
+  appendEmpty: () => this;
+  goto: (loopCall: () => boolean, loopFrom: () => CallItem) => this;
+  mark: (mark: string) => this;
+  success(succ: (o: any) => void): this;
+  success(): (o: any) => void;
+  success(succ?: (o: any) => void) {
     return Frank.FrankUtils.error("Not Implement") as any;
   }
-  error<T>(this: T, err: (o: Error) => void): CallStack_Super;
-  error<T>(this: T): (o: Error) => void;
-  error<T>(this: T) {
+  error(err: (o: Error) => void): this;
+  error(): (o: Error) => void;
+  error(err?: (o: Error) => void) {
     return Frank.FrankUtils.error("Not Implement") as any;
   }
-  complete(comp: (o: any) => void): CallStack_Super;
+  complete(comp: (o: any) => void): this;
   complete(): (o: any) => void;
-  complete() {
+  complete(comp?: (o: any) => void) {
     return Frank.FrankUtils.error("Not Implement") as any;
   }
   execute: () => void;
@@ -42,7 +45,7 @@ export default class CallStack_Super {
     var execItem: CallItem | null = null;
     var markedItemMap = new Map<string, CallItem | null>();
     this.lastItem = () => lastItem;
-    this.val = function(variKey: string): any {
+    this.val = function (variKey: string): any {
       if (variKey === null) {
         return null;
       } else if (!stackResults.hasOwnProperty(variKey)) {
@@ -51,7 +54,7 @@ export default class CallStack_Super {
         return stackResults[variKey];
       }
     };
-    this.append = function() {
+    this.append = function () {
       var ci = priv__.createItem.apply(this, arguments);
       if (headItem === null && lastItem === null) {
         headItem = lastItem = ci;
@@ -62,25 +65,38 @@ export default class CallStack_Super {
       }
       return this;
     };
-    this.next = function() {
+    this.appendEmpty = function () {
+      return this.append(
+        null,
+        (r) => r(),
+        () => []
+      );
+    };
+    this.next = function () {
       if (execItem) {
         var ci = priv__.createItem.apply(this, arguments);
         execItem.next(ci.next(execItem.next()));
       }
-      return this as any;
+      return this;
     };
-    this.loop = function(loopCall, loopFrom) {
+    this.loop = function (loopCall, loopFrom) {
       if (lastItem) {
         lastItem.loopCall(loopCall);
         lastItem.loopFrom(loopFrom);
       }
-      return this as any;
+      return this;
     };
-    this.sleep = function(msec) {
+    this.goto = function (loopCall, loopFrom) {
+      this.appendEmpty();
+      this.loop(loopCall, loopFrom);
+      return this;
+    };
+    this.sleep = function (msec) {
+      this.appendEmpty();
       if (lastItem) {
         lastItem.methodCall(
-          (function(oldCall) {
-            return function(this: any) {
+          (function (oldCall) {
+            return function (this: any) {
               var args = new Array<any>();
               for (var i = 0; i < arguments.length; i++) {
                 args.push(arguments[i]);
@@ -90,9 +106,9 @@ export default class CallStack_Super {
           })(lastItem.methodCall())
         );
       }
-      return this as any;
+      return this;
     };
-    this.execute = function() {
+    this.execute = function () {
       try {
         execItem = headItem;
         priv__.execApply();
@@ -100,11 +116,15 @@ export default class CallStack_Super {
         priv__.handleError(error);
       }
     };
-    this.markAs = function(mark) {
+    this.markAs = function (mark) {
       markedItemMap.set(mark, lastItem);
-      return this as any;
+      return this;
     };
-    this.findMark = mark => {
+    this.mark = function (mark) {
+      this.appendEmpty();
+      return this.markAs(mark);
+    };
+    this.findMark = (mark) => {
       var item = markedItemMap.get(mark);
       if (item) {
         return item;
@@ -115,7 +135,7 @@ export default class CallStack_Super {
     this.success = Frank.FrankUtils.getter_setter();
     this.error = Frank.FrankUtils.getter_setter();
     this.complete = Frank.FrankUtils.getter_setter();
-    priv__.createItem = function() {
+    priv__.createItem = function () {
       if (
         arguments.length === 1 && //e
         arguments[0].hasOwnProperty("isInstance") && //e
@@ -140,13 +160,10 @@ export default class CallStack_Super {
         if (typeof methodCall !== "function") {
           throw new Error("methodCall must be a function");
         }
-        return new CallItem()
-          .variKey(variKey)
-          .methodCall(methodCall)
-          .paramsCall(paramsCall);
+        return new CallItem().variKey(variKey).methodCall(methodCall).paramsCall(paramsCall);
       }
     };
-    priv__.params2args = function(params: any) {
+    priv__.params2args = function (params: any) {
       if (params === null) {
         // (cb)
         params = [priv__.receive];
@@ -159,14 +176,14 @@ export default class CallStack_Super {
       }
       return params;
     };
-    priv__.execMethod = function() {
+    priv__.execMethod = function () {
       if (execItem) {
         return execItem.methodCall();
       } else {
         priv__.handleError(new Error("Empty Item!"));
       }
     };
-    priv__.execArgs = function() {
+    priv__.execArgs = function () {
       if (execItem) {
         var params = null;
         if (!execItem.paramsCall()) {
@@ -193,12 +210,12 @@ export default class CallStack_Super {
         current_stack = temp;
       }
     };
-    priv__.execApply = function() {
+    priv__.execApply = function () {
       priv__.bindCurrentStack(() => {
         priv__.execMethod().apply(that, priv__.execArgs());
       });
     };
-    priv__.receive = function(o: any) {
+    priv__.receive = function (o: any) {
       priv__.bindCurrentStack(() => {
         if (execItem) {
           try {
@@ -219,7 +236,7 @@ export default class CallStack_Super {
         }
       });
     };
-    priv__.handleError = function(e: Error) {
+    priv__.handleError = function (e: Error) {
       priv__.bindCurrentStack(() => {
         try {
           if (that.error()) {
@@ -233,7 +250,7 @@ export default class CallStack_Super {
         }
       });
     };
-    priv__.handleSuccess = function(o: any) {
+    priv__.handleSuccess = function (o: any) {
       priv__.bindCurrentStack(() => {
         if (that.success()) {
           that.success().apply(that, [o]);
@@ -241,7 +258,7 @@ export default class CallStack_Super {
         priv__.handleComplete(o);
       });
     };
-    priv__.handleComplete = function(oe: any) {
+    priv__.handleComplete = function (oe: any) {
       priv__.bindCurrentStack(() => {
         try {
           if (that.complete()) {
@@ -252,7 +269,7 @@ export default class CallStack_Super {
         }
       });
     };
-    priv__.variSave = function(variKey: string, value: any) {
+    priv__.variSave = function (variKey: string, value: any) {
       if (value instanceof Error) {
         throw value;
       }
@@ -260,7 +277,7 @@ export default class CallStack_Super {
         stackResults[variKey] = value;
       }
     };
-    priv__.ifLoopContinueAndJump = function() {
+    priv__.ifLoopContinueAndJump = function () {
       if (execItem) {
         var result = !!execItem.loopCall() && execItem.loopCall().call(that);
         return result;

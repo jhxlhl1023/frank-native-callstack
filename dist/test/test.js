@@ -40,26 +40,28 @@ function asyncDvd(p1, p2, cb) {
     // let the stack just appended name
     // "itemi", => fac = 1
     // for loop logic jump back.
-    cs.append("fac", index_1.default.ASSIGN, function () { return [1]; }).markAs("itemi");
+    cs.mark("itemi");
+    cs.append("fac", index_1.default.ASSIGN, function () { return [1]; });
     // 4. j = 1;
     cs.append("j", index_1.default.ASSIGN, function () { return [1]; });
     // 5. fac = asyncMul(fac, j);
     // let the stack just appended
     // name "itemj", => fac = fac * j
     // for loop logic jump back.
-    cs.append("fac", asyncMul, function () { return [cs.val("fac"), cs.val("j")]; }).markAs("itemj");
+    cs.mark("itemj");
+    cs.append("fac", asyncMul, function () { return [cs.val("fac"), cs.val("j")]; });
     // 6. j = asyncAdd(j, 1)
     cs.append("j", asyncAdd, function () { return [cs.val("j"), 1]; });
     // 7. j <= i?back to itemj
-    cs.loop(function () { return cs.val("j") <= cs.val("i"); }, function () { return cs.findMark("itemj"); });
+    cs.goto(function () { return cs.val("j") <= cs.val("i"); }, function () { return cs.findMark("itemj"); });
     // 8. i = asyncAdd(i, 1)
     cs.append("i", asyncAdd, function () { return [cs.val("i"), 1]; });
     // 9. sum = asyncAdd(sum, fac)
     cs.append("sum", asyncAdd, function () { return [cs.val("sum"), cs.val("fac")]; });
     // 10. i <= 10?back to itemi
-    cs.loop(function () { return cs.val("i") <= 10; }, function () { return cs.findMark("itemi"); });
+    cs.goto(function () { return cs.val("i") <= 10; }, function () { return cs.findMark("itemi"); });
     // 11. console sum value. all done.
-    cs.success(function (sum) { return console.log("1! + 2! + 3! + 4! + 5! + 6! + 7! + 8! + 9! + 10! = " + sum); });
+    cs.success(function () { return console.log("1! + 2! + 3! + 4! + 5! + 6! + 7! + 8! + 9! + 10! = " + cs.val("sum")); });
     // 12. console err if happends
     cs.error(function (err) { return console.error(err.message); });
     //

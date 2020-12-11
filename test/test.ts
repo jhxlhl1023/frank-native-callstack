@@ -35,18 +35,20 @@ function asyncDvd(p1: number, p2: number, cb: (o: any) => void): void {
   // let the stack just appended name
   // "itemi", => fac = 1
   // for loop logic jump back.
-  cs.append("fac", CallStack.ASSIGN, () => [1]).markAs("itemi");
+  cs.mark("itemi");
+  cs.append("fac", CallStack.ASSIGN, () => [1]);
   // 4. j = 1;
   cs.append("j", CallStack.ASSIGN, () => [1]);
   // 5. fac = asyncMul(fac, j);
   // let the stack just appended
   // name "itemj", => fac = fac * j
   // for loop logic jump back.
-  cs.append("fac", asyncMul, () => [cs.val("fac"), cs.val("j")]).markAs("itemj");
+  cs.mark("itemj");
+  cs.append("fac", asyncMul, () => [cs.val("fac"), cs.val("j")]);
   // 6. j = asyncAdd(j, 1)
   cs.append("j", asyncAdd, () => [cs.val("j"), 1]);
   // 7. j <= i?back to itemj
-  cs.loop(
+  cs.goto(
     () => cs.val("j") <= cs.val("i"),
     () => cs.findMark("itemj")
   );
@@ -55,12 +57,12 @@ function asyncDvd(p1: number, p2: number, cb: (o: any) => void): void {
   // 9. sum = asyncAdd(sum, fac)
   cs.append("sum", asyncAdd, () => [cs.val("sum"), cs.val("fac")]);
   // 10. i <= 10?back to itemi
-  cs.loop(
+  cs.goto(
     () => cs.val("i") <= 10,
     () => cs.findMark("itemi")
   );
   // 11. console sum value. all done.
-  cs.success((sum: any) => console.log("1! + 2! + 3! + 4! + 5! + 6! + 7! + 8! + 9! + 10! = " + sum));
+  cs.success(() => console.log("1! + 2! + 3! + 4! + 5! + 6! + 7! + 8! + 9! + 10! = " + cs.val("sum")));
   // 12. console err if happends
   cs.error((err: any) => console.error(err.message));
   //

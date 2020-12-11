@@ -44,6 +44,9 @@ var CallStack_Super = /** @class */ (function () {
             }
             return this;
         };
+        this.appendEmpty = function () {
+            return this.append(null, function (r) { return r(); }, function () { return []; });
+        };
         this.next = function () {
             if (execItem) {
                 var ci = priv__.createItem.apply(this, arguments);
@@ -58,7 +61,13 @@ var CallStack_Super = /** @class */ (function () {
             }
             return this;
         };
+        this.goto = function (loopCall, loopFrom) {
+            this.appendEmpty();
+            this.loop(loopCall, loopFrom);
+            return this;
+        };
         this.sleep = function (msec) {
+            this.appendEmpty();
             if (lastItem) {
                 lastItem.methodCall((function (oldCall) {
                     return function () {
@@ -85,6 +94,10 @@ var CallStack_Super = /** @class */ (function () {
         this.markAs = function (mark) {
             markedItemMap.set(mark, lastItem);
             return this;
+        };
+        this.mark = function (mark) {
+            this.appendEmpty();
+            return this.markAs(mark);
         };
         this.findMark = function (mark) {
             var item = markedItemMap.get(mark);
@@ -124,10 +137,7 @@ var CallStack_Super = /** @class */ (function () {
                 if (typeof methodCall !== "function") {
                     throw new Error("methodCall must be a function");
                 }
-                return new CallItem()
-                    .variKey(variKey)
-                    .methodCall(methodCall)
-                    .paramsCall(paramsCall);
+                return new CallItem().variKey(variKey).methodCall(methodCall).paramsCall(paramsCall);
             }
         };
         priv__.params2args = function (params) {
@@ -268,13 +278,13 @@ var CallStack_Super = /** @class */ (function () {
             }
         };
     }
-    CallStack_Super.prototype.success = function () {
+    CallStack_Super.prototype.success = function (succ) {
         return frank_native_core_1.default.FrankUtils.error("Not Implement");
     };
-    CallStack_Super.prototype.error = function () {
+    CallStack_Super.prototype.error = function (err) {
         return frank_native_core_1.default.FrankUtils.error("Not Implement");
     };
-    CallStack_Super.prototype.complete = function () {
+    CallStack_Super.prototype.complete = function (comp) {
         return frank_native_core_1.default.FrankUtils.error("Not Implement");
     };
     return CallStack_Super;
